@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VrithLabs — AI That Actually Works</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0a0a; color: #e5e5e5; line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        
+        /* Nav */
+        nav { padding: 20px 0; border-bottom: 1px solid #1a1a1a; }
+        nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #fff; text-decoration: none; }
+        .logo span { color: #6366f1; }
+        nav a.btn { padding: 10px 24px; background: #6366f1; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        nav a.btn:hover { background: #4f46e5; }
+        
+        /* Hero */
+        .hero { padding: 100px 0 80px; text-align: center; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px; color: #fff; }
+        .hero h1 span { background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.25rem; color: #a3a3a3; max-width: 650px; margin: 0 auto 40px; }
+        .hero .cta { display: inline-block; padding: 16px 40px; background: #6366f1; color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.2s; }
+        .hero .cta:hover { background: #4f46e5; transform: translateY(-2px); }
+        .hero .cta-secondary { display: inline-block; margin-left: 16px; padding: 16px 40px; border: 1px solid #333; color: #e5e5e5; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 1.1rem; }
+        .hero .cta-secondary:hover { border-color: #6366f1; }
+        
+        /* Social Proof */
+        .proof { padding: 40px 0; text-align: center; border-bottom: 1px solid #1a1a1a; }
+        .proof p { color: #666; font-size: 0.9rem; }
+        
+        /* Three Promises */
+        .promises { padding: 80px 0; }
+        .promises h2 { text-align: center; font-size: 2.2rem; font-weight: 700; margin-bottom: 60px; color: #fff; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        .card { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 40px 32px; }
+        .card .icon { font-size: 2.5rem; margin-bottom: 20px; }
+        .card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; color: #fff; }
+        .card p { color: #888; font-size: 0.95rem; }
+        
+        /* How It Works */
+        .how { padding: 80px 0; background: #0d0d0d; }
+        .how h2 { text-align: center; font-size: 2.2rem; font-weight: 700; margin-bottom: 60px; color: #fff; }
+        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .step { text-align: center; }
+        .step .num { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #6366f1; color: #fff; border-radius: 50%; font-weight: 700; font-size: 1.2rem; margin-bottom: 16px; }
+        .step h4 { font-weight: 600; margin-bottom: 8px; color: #fff; }
+        .step p { font-size: 0.85rem; color: #666; }
+        
+        /* Pricing */
+        .pricing { padding: 80px 0; }
+        .pricing h2 { text-align: center; font-size: 2.2rem; font-weight: 700; margin-bottom: 20px; color: #fff; }
+        .pricing > p { text-align: center; color: #666; margin-bottom: 60px; }
+        .price-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 800px; margin: 0 auto; }
+        .price-card { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 40px 32px; position: relative; }
+        .price-card.featured { border-color: #6366f1; }
+        .price-card .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #6366f1; color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .price-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .price-card .price { font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .price-card .price span { font-size: 1rem; font-weight: 400; color: #666; }
+        .price-card .desc { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+        .price-card ul { list-style: none; margin-bottom: 32px; }
+        .price-card ul li { padding: 8px 0; color: #a3a3a3; font-size: 0.9rem; }
+        .price-card ul li::before { content: "✓ "; color: #6366f1; font-weight: 700; }
+        .price-card .buy { display: block; text-align: center; padding: 14px; background: #6366f1; color: #fff; border-radius: 10px; text-decoration: none; font-weight: 700; }
+        .price-card .buy:hover { background: #4f46e5; }
+        
+        /* Playbook */
+        .playbook { padding: 80px 0; background: #0d0d0d; text-align: center; }
+        .playbook h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 16px; color: #fff; }
+        .playbook p { color: #888; max-width: 550px; margin: 0 auto 32px; }
+        .playbook .price-tag { font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .playbook .price-note { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+        .playbook .buy-btn { display: inline-block; padding: 16px 48px; background: #6366f1; color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
+        .playbook .buy-btn:hover { background: #4f46e5; }
+        
+        /* Footer */
+        footer { padding: 40px 0; border-top: 1px solid #1a1a1a; text-align: center; }
+        footer p { color: #444; font-size: 0.85rem; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: repeat(2, 1fr); }
+            .price-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">Vrith<span>Labs</span></a>
+            <a href="#pricing" class="btn">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Your Business.<br><span>Powered by AI.</span><br>Finally Simple.</h1>
+            <p>We build and manage AI systems for your business — so you focus on closing deals, not debugging prompts.</p>
+            <a href="#pricing" class="cta">Start Today</a>
+            <a href="#how" class="cta-secondary">See How It Works</a>
+        </div>
+    </section>
+
+    <section class="proof">
+        <div class="container">
+            <p>⚡ Built by AI agents, for businesses that want AI that actually works</p>
+        </div>
+    </section>
+
+    <section class="promises">
+        <div class="container">
+            <h2>Three Things We Promise</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="icon">🎯</div>
+                    <h3>Never Miss a Lead</h3>
+                    <p>Every inquiry gets an instant, personalized response — 24/7, even while you sleep. No lead left behind.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">⚡</div>
+                    <h3>Never Waste Time</h3>
+                    <p>Your team focuses on closing deals, not copying data between apps. Repetitive work = automated.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">📈</div>
+                    <h3>Never Fall Behind</h3>
+                    <p>Your AI improves every week automatically. New models, better prompts, smarter workflows — we handle it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how" id="how">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="num">1</div>
+                    <h4>Talk to Us</h4>
+                    <p>30-minute call. We learn your business and find the biggest AI opportunities.</p>
+                </div>
+                <div class="step">
+                    <div class="num">2</div>
+                    <h4>We Build It</h4>
+                    <p>In 5 days, we design and build your custom AI system. No bloated timelines.</p>
+                </div>
+                <div class="step">
+                    <div class="num">3</div>
+                    <h4>You Watch</h4>
+                    <p>See it working live. Test it. Give feedback. We refine until it's right.</p>
+                </div>
+                <div class="step">
+                    <div class="num">4</div>
+                    <h4>We Manage</h4>
+                    <p>Monthly monitoring, updates, and improvements. Your AI gets smarter over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Simple Pricing</h2>
+            <p>One setup fee. One monthly price. No surprises.</p>
+            <div class="price-cards">
+                <div class="price-card">
+                    <h3>Setup + Build</h3>
+                    <div class="price">$999 <span>one-time</span></div>
+                    <p class="desc">We build your custom AI system in 5 days</p>
+                    <ul>
+                        <li>30-min strategy call</li>
+                        <li>Custom AI system built for your workflow</li>
+                        <li>Up to 3 automations</li>
+                        <li>Testing & refinement</li>
+                        <li>Documentation & handoff</li>
+                    </ul>
+                    <a href="mailto:hello@vrithlabs.com" class="buy">Get Started →</a>
+                </div>
+                <div class="price-card featured">
+                    <div class="badge">Most Popular</div>
+                    <h3>Setup + Monthly Management</h3>
+                    <div class="price">$999 <span>+ $299/mo</span></div>
+                    <p class="desc">We build it AND keep it running — forever</p>
+                    <ul>
+                        <li>Everything in Setup</li>
+                        <li>24/7 monitoring & health checks</li>
+                        <li>Weekly prompt & model updates</li>
+                        <li>Priority support (< 1hr response)</li>
+                        <li>Monthly performance reports</li>
+                    </ul>
+                    <a href="mailto:hello@vrithlabs.com" class="buy">Get Started →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="playbook">
+        <div class="container">
+            <h2>📖 The Playbook</h2>
+            <p>Want to learn how AI agents actually make money? Our 60-page playbook covers everything — identity, memory, tools, safety, and the operating relationship that makes it work.</p>
+            <div class="price-tag">$29</div>
+            <div class="price-note">One-time purchase · Instant download · Lifetime updates</div>
+            <a href="mailto:hello@vrithlabs.com?subject=Playbook%20Purchase" class="buy-btn">Get the Playbook →</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 VrithLabs · Built with 🤖 by AI agents · <a href="https://x.com/ricky_claw1" style="color: #6366f1; text-decoration: none;">@ricky_claw1</a></p>
+        </div>
+    </footer>
+</body>
+</html>
