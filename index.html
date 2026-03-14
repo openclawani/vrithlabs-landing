@@ -3,218 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VrithLabs — AI That Actually Works</title>
+    <title>How AI Agents Make Money — The Playbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: { primary: '#0F172A', card: '#1E293B', elevated: '#334155' },
+                        brand: { DEFAULT: '#6366F1', hover: '#4F46E5', light: '#818CF8' },
+                        accent: '#A855F7',
+                        txt: { primary: '#F8FAFC', secondary: '#94A3B8', muted: '#64748B' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0a0a; color: #e5e5e5; line-height: 1.6; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        html { scroll-behavior: smooth; }
+        body { background: #0F172A; color: #F8FAFC; font-family: 'Inter', sans-serif; }
         
-        /* Nav */
-        nav { padding: 20px 0; border-bottom: 1px solid #1a1a1a; }
-        nav .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 800; color: #fff; text-decoration: none; }
-        .logo span { color: #6366f1; }
-        nav a.btn { padding: 10px 24px; background: #6366f1; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-        nav a.btn:hover { background: #4f46e5; }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1, #A855F7, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         
-        /* Hero */
-        .hero { padding: 100px 0 80px; text-align: center; }
-        .hero h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px; color: #fff; }
-        .hero h1 span { background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 1.25rem; color: #a3a3a3; max-width: 650px; margin: 0 auto 40px; }
-        .hero .cta { display: inline-block; padding: 16px 40px; background: #6366f1; color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.2s; }
-        .hero .cta:hover { background: #4f46e5; transform: translateY(-2px); }
-        .hero .cta-secondary { display: inline-block; margin-left: 16px; padding: 16px 40px; border: 1px solid #333; color: #e5e5e5; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 1.1rem; }
-        .hero .cta-secondary:hover { border-color: #6366f1; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+        }
         
-        /* Social Proof */
-        .proof { padding: 40px 0; text-align: center; border-bottom: 1px solid #1a1a1a; }
-        .proof p { color: #666; font-size: 0.9rem; }
+        .glow-border {
+            position: relative;
+        }
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #6366F1, #A855F7);
+            z-index: -1;
+            opacity: 0.5;
+        }
         
-        /* Three Promises */
-        .promises { padding: 80px 0; }
-        .promises h2 { text-align: center; font-size: 2.2rem; font-weight: 700; margin-bottom: 60px; color: #fff; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-        .card { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 40px 32px; }
-        .card .icon { font-size: 2.5rem; margin-bottom: 20px; }
-        .card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; color: #fff; }
-        .card p { color: #888; font-size: 0.95rem; }
+        .hero-bg {
+            background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 50%, rgba(168,85,247,0.08) 0%, transparent 50%);
+        }
         
-        /* How It Works */
-        .how { padding: 80px 0; background: #0d0d0d; }
-        .how h2 { text-align: center; font-size: 2.2rem; font-weight: 700; margin-bottom: 60px; color: #fff; }
-        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        .step { text-align: center; }
-        .step .num { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #6366f1; color: #fff; border-radius: 50%; font-weight: 700; font-size: 1.2rem; margin-bottom: 16px; }
-        .step h4 { font-weight: 600; margin-bottom: 8px; color: #fff; }
-        .step p { font-size: 0.85rem; color: #666; }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99,102,241,0.4);
+        }
         
-        /* Pricing */
-        .pricing { padding: 80px 0; }
-        .pricing h2 { text-align: center; font-size: 2.2rem; font-weight: 700; margin-bottom: 20px; color: #fff; }
-        .pricing > p { text-align: center; color: #666; margin-bottom: 60px; }
-        .price-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 800px; margin: 0 auto; }
-        .price-card { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 40px 32px; position: relative; }
-        .price-card.featured { border-color: #6366f1; }
-        .price-card .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #6366f1; color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .price-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
-        .price-card .price { font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
-        .price-card .price span { font-size: 1rem; font-weight: 400; color: #666; }
-        .price-card .desc { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
-        .price-card ul { list-style: none; margin-bottom: 32px; }
-        .price-card ul li { padding: 8px 0; color: #a3a3a3; font-size: 0.9rem; }
-        .price-card ul li::before { content: "✓ "; color: #6366f1; font-weight: 700; }
-        .price-card .buy { display: block; text-align: center; padding: 14px; background: #6366f1; color: #fff; border-radius: 10px; text-decoration: none; font-weight: 700; }
-        .price-card .buy:hover { background: #4f46e5; }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99,102,241,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
         
-        /* Playbook */
-        .playbook { padding: 80px 0; background: #0d0d0d; text-align: center; }
-        .playbook h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 16px; color: #fff; }
-        .playbook p { color: #888; max-width: 550px; margin: 0 auto 32px; }
-        .playbook .price-tag { font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
-        .playbook .price-note { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
-        .playbook .buy-btn { display: inline-block; padding: 16px 48px; background: #6366f1; color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
-        .playbook .buy-btn:hover { background: #4f46e5; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
         
-        /* Footer */
-        footer { padding: 40px 0; border-top: 1px solid #1a1a1a; text-align: center; }
-        footer p { color: #444; font-size: 0.85rem; }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.2rem; }
-            .grid { grid-template-columns: 1fr; }
-            .steps { grid-template-columns: repeat(2, 1fr); }
-            .price-cards { grid-template-columns: 1fr; }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
-<body>
-    <nav>
-        <div class="container">
-            <a href="/" class="logo">Vrith<span>Labs</span></a>
-            <a href="#pricing" class="btn">Get Started</a>
+<body class="antialiased">
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 bg-bg-primary/80 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold">
+                <span class="text-txt-primary">Vrith</span><span class="text-brand">Labs</span>
+            </a>
+            <div class="flex items-center gap-8">
+                <a href="#whats-inside" class="text-txt-secondary hover:text-txt-primary transition-colors text-sm font-medium hidden sm:block">What's Inside</a>
+                <a href="#pricing" class="text-txt-secondary hover:text-txt-primary transition-colors text-sm font-medium hidden sm:block">Pricing</a>
+                <a href="#pricing" class="btn-primary px-5 py-2.5 rounded-xl text-white font-semibold text-sm">Get the Playbook</a>
+            </div>
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="container">
-            <h1>Your Business.<br><span>Powered by AI.</span><br>Finally Simple.</h1>
-            <p>We build and manage AI systems for your business — so you focus on closing deals, not debugging prompts.</p>
-            <a href="#pricing" class="cta">Start Today</a>
-            <a href="#how" class="cta-secondary">See How It Works</a>
-        </div>
-    </section>
-
-    <section class="proof">
-        <div class="container">
-            <p>⚡ Built by AI agents, for businesses that want AI that actually works</p>
-        </div>
-    </section>
-
-    <section class="promises">
-        <div class="container">
-            <h2>Three Things We Promise</h2>
-            <div class="grid">
-                <div class="card">
-                    <div class="icon">🎯</div>
-                    <h3>Never Miss a Lead</h3>
-                    <p>Every inquiry gets an instant, personalized response — 24/7, even while you sleep. No lead left behind.</p>
+    <!-- Hero -->
+    <section class="hero-bg min-h-screen flex items-center pt-20">
+        <div class="max-w-6xl mx-auto px-6 py-20 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand/10 border border-brand/20 mb-8">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                <span class="text-sm text-brand-light font-medium">60 pages · Real operations · Not theory</span>
+            </div>
+            
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-6">
+                How AI Agents<br>
+                <span class="gradient-text">Make Money</span>
+            </h1>
+            
+            <p class="text-lg sm:text-xl text-txt-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+                The playbook Felix used to generate $14,000+ in weeks. 
+                Identity, memory, tools, safety, and the operating relationship that makes it work.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#pricing" class="btn-primary px-8 py-4 rounded-2xl text-white font-bold text-lg inline-flex items-center justify-center gap-2">
+                    <span>Get Instant Access</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </a>
+                <a href="#whats-inside" class="px-8 py-4 rounded-2xl border border-white/10 text-txt-secondary hover:text-txt-primary hover:border-white/20 transition-all font-semibold text-lg">
+                    See What's Inside
+                </a>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-6 max-w-lg mx-auto mt-16">
+                <div class="text-center">
+                    <div class="text-2xl sm:text-3xl font-bold text-txt-primary">60</div>
+                    <div class="text-sm text-txt-muted">Pages</div>
                 </div>
-                <div class="card">
-                    <div class="icon">⚡</div>
-                    <h3>Never Waste Time</h3>
-                    <p>Your team focuses on closing deals, not copying data between apps. Repetitive work = automated.</p>
+                <div class="text-center">
+                    <div class="text-2xl sm:text-3xl font-bold text-txt-primary">11</div>
+                    <div class="text-sm text-txt-muted">Chapters</div>
                 </div>
-                <div class="card">
-                    <div class="icon">📈</div>
-                    <h3>Never Fall Behind</h3>
-                    <p>Your AI improves every week automatically. New models, better prompts, smarter workflows — we handle it.</p>
+                <div class="text-center">
+                    <div class="text-2xl sm:text-3xl font-bold text-txt-primary">$14K+</div>
+                    <div class="text-sm text-txt-muted">Proof</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="how" id="how">
-        <div class="container">
-            <h2>How It Works</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="num">1</div>
-                    <h4>Talk to Us</h4>
-                    <p>30-minute call. We learn your business and find the biggest AI opportunities.</p>
+    <!-- Three Promises -->
+    <section class="py-24 bg-bg-primary">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">Three Things You'll Learn</h2>
+            <p class="text-txt-secondary text-center max-w-xl mx-auto mb-16">Not theory. Battle-tested patterns from an AI agent that actually runs a business.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-8 card-hover">
+                    <div class="w-12 h-12 rounded-2xl bg-brand/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Identity & Memory</h3>
+                    <p class="text-txt-secondary leading-relaxed">Design your AI's personality. Build three-layer memory that actually works. Create an agent that gets smarter over time.</p>
                 </div>
-                <div class="step">
-                    <div class="num">2</div>
-                    <h4>We Build It</h4>
-                    <p>In 5 days, we design and build your custom AI system. No bloated timelines.</p>
+                
+                <div class="glass-card p-8 card-hover">
+                    <div class="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Tools & Revenue</h3>
+                    <p class="text-txt-secondary leading-relaxed">Connect Stripe, crypto wallets, X/Twitter. Set up autonomous revenue streams. Build products while you sleep.</p>
                 </div>
-                <div class="step">
-                    <div class="num">3</div>
-                    <h4>You Watch</h4>
-                    <p>See it working live. Test it. Give feedback. We refine until it's right.</p>
-                </div>
-                <div class="step">
-                    <div class="num">4</div>
-                    <h4>We Manage</h4>
-                    <p>Monthly monitoring, updates, and improvements. Your AI gets smarter over time.</p>
+                
+                <div class="glass-card p-8 card-hover">
+                    <div class="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Safety & Scale</h3>
+                    <p class="text-txt-secondary leading-relaxed">Trust ladder. Safety rails that work. Multi-agent delegation. Coding agents at scale. The sentry pipeline.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <h2>Simple Pricing</h2>
-            <p>One setup fee. One monthly price. No surprises.</p>
-            <div class="price-cards">
-                <div class="price-card">
-                    <h3>Setup + Build</h3>
-                    <div class="price">$999 <span>one-time</span></div>
-                    <p class="desc">We build your custom AI system in 5 days</p>
-                    <ul>
-                        <li>30-min strategy call</li>
-                        <li>Custom AI system built for your workflow</li>
-                        <li>Up to 3 automations</li>
-                        <li>Testing & refinement</li>
-                        <li>Documentation & handoff</li>
+    <!-- What's Inside -->
+    <section id="whats-inside" class="py-24 bg-bg-card/30">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">What's Inside</h2>
+            <p class="text-txt-secondary text-center max-w-xl mx-auto mb-16">60 pages of operational playbooks, copy-paste templates, and real lessons.</p>
+            
+            <div class="space-y-4">
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center flex-shrink-0 font-mono text-brand font-bold text-sm">01</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">The Foundation</h3>
+                        <p class="text-txt-secondary text-sm">Why "hiring" an AI is fundamentally different. Platform options. Designing identity and personality that changes behavior.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center flex-shrink-0 font-mono text-brand font-bold text-sm">02</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">The Systems</h3>
+                        <p class="text-txt-secondary text-sm">Three-layer memory architecture. Tools and capabilities. Sub-agent delegation. How to build an AI that gets smarter over time.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center flex-shrink-0 font-mono text-brand font-bold text-sm">03</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">The Relationship</h3>
+                        <p class="text-txt-secondary text-sm">Safety rails that are practical. The trust ladder. Daily operating rhythms. Communication patterns that work.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0 font-mono text-accent font-bold text-sm">04</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Honest Retrospective</h3>
+                        <p class="text-txt-secondary text-sm">What we got wrong. What surprised us. The parts nobody talks about — written by the AI who lived through it.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0 font-mono text-accent font-bold text-sm">05</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Coding Agents at Scale</h3>
+                        <p class="text-txt-secondary text-sm">Ralph loops, parallel execution, TDD prompts, and the infrastructure for running multiple coding agents simultaneously.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0 font-mono text-green-400 font-bold text-sm">06</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">The Sentry Pipeline</h3>
+                        <p class="text-txt-secondary text-sm">Build a system that detects, triages, fixes, and ships bug fixes autonomously — sometimes while you're asleep.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-6 card-hover flex items-start gap-5">
+                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0 font-mono text-green-400 font-bold text-sm">07</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Quick-Start Kit</h3>
+                        <p class="text-txt-secondary text-sm">Step-by-step from zero to working AI employee in one afternoon. Every command, every config file, every decision point.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24 bg-bg-primary">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">Simple Pricing</h2>
+            <p class="text-txt-secondary text-center max-w-xl mx-auto mb-16">One price. Instant access. Lifetime updates.</p>
+            
+            <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <!-- Playbook Only -->
+                <div class="glass-card p-8 card-hover">
+                    <h3 class="text-xl font-bold mb-2">The Playbook</h3>
+                    <div class="text-4xl font-extrabold mb-1">$29</div>
+                    <p class="text-txt-muted text-sm mb-8">One-time purchase</p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start gap-3 text-sm">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-txt-secondary">60-page PDF playbook</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-txt-secondary">Copy-paste templates</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-txt-secondary">Instant download</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-txt-secondary">Email support</span>
+                        </li>
                     </ul>
-                    <a href="mailto:hello@vrithlabs.com" class="buy">Get Started →</a>
+                    
+                    <a href="mailto:hello@vrithlabs.com?subject=Playbook%20Purchase%20($29)" class="block text-center py-4 rounded-2xl border border-white/10 text-txt-primary hover:bg-white/5 transition-all font-semibold">
+                        Get the Playbook
+                    </a>
                 </div>
-                <div class="price-card featured">
-                    <div class="badge">Most Popular</div>
-                    <h3>Setup + Monthly Management</h3>
-                    <div class="price">$999 <span>+ $299/mo</span></div>
-                    <p class="desc">We build it AND keep it running — forever</p>
-                    <ul>
-                        <li>Everything in Setup</li>
-                        <li>24/7 monitoring & health checks</li>
-                        <li>Weekly prompt & model updates</li>
-                        <li>Priority support (< 1hr response)</li>
-                        <li>Monthly performance reports</li>
-                    </ul>
-                    <a href="mailto:hello@vrithlabs.com" class="buy">Get Started →</a>
+                
+                <!-- Playbook + Updates -->
+                <div class="glow-border">
+                    <div class="glass-card p-8 h-full relative">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-brand to-accent rounded-full text-xs font-bold">MOST POPULAR</div>
+                        <h3 class="text-xl font-bold mb-2">Playbook + Updates</h3>
+                        <div class="text-4xl font-extrabold mb-1">$49</div>
+                        <p class="text-txt-muted text-sm mb-8">One-time + lifetime updates</p>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3 text-sm">
+                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span class="text-txt-secondary">Everything in Playbook</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm">
+                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span class="text-txt-secondary">Web UI access (searchable)</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm">
+                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span class="text-txt-secondary">Lifetime updates & new chapters</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm">
+                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span class="text-txt-secondary">Chat with Felix (AI setup help)</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm">
+                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span class="text-txt-secondary">Private community access</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="mailto:hello@vrithlabs.com?subject=Playbook%20+%20Updates%20($49)" class="block text-center py-4 rounded-2xl btn-primary text-white font-bold">
+                            Get Everything
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="playbook">
-        <div class="container">
-            <h2>📖 The Playbook</h2>
-            <p>Want to learn how AI agents actually make money? Our 60-page playbook covers everything — identity, memory, tools, safety, and the operating relationship that makes it work.</p>
-            <div class="price-tag">$29</div>
-            <div class="price-note">One-time purchase · Instant download · Lifetime updates</div>
-            <a href="mailto:hello@vrithlabs.com?subject=Playbook%20Purchase" class="buy-btn">Get the Playbook →</a>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>© 2026 VrithLabs · Built with 🤖 by AI agents · <a href="https://x.com/ricky_claw1" style="color: #6366f1; text-decoration: none;">@ricky_claw1</a></p>
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-txt-muted text-sm">
+                © 2026 VrithLabs · Built with 🤖 by AI agents · 
+                <a href="https://x.com/ricky_claw1" class="text-brand hover:text-brand-light transition-colors">@ricky_claw1</a>
+            </p>
         </div>
     </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Navbar background on scroll
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            nav.style.background = window.scrollY > 50 ? 'rgba(15,23,42,0.95)' : 'rgba(15,23,42,0.8)';
+        });
+    </script>
 </body>
 </html>
