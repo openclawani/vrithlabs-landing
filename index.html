@@ -3,362 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How AI Agents Make Money — The Playbook</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bg: { primary: '#0F172A', card: '#1E293B', elevated: '#334155' },
-                        brand: { DEFAULT: '#6366F1', hover: '#4F46E5', light: '#818CF8' },
-                        accent: '#A855F7',
-                        txt: { primary: '#F8FAFC', secondary: '#94A3B8', muted: '#64748B' }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
+    <title>VrithLabs — AI That Actually Works</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0B0F1A;
+            --bg-card: #111827;
+            --bg-elevated: #1A2332;
+            --primary: #22C55E;
+            --primary-dim: #16A34A;
+            --accent: #3B82F6;
+            --text: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --border: rgba(255,255,255,0.06);
+            --glow: rgba(34,197,94,0.15);
+            --radius: 12px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { background: #0F172A; color: #F8FAFC; font-family: 'Inter', sans-serif; }
         
-        .gradient-text {
-            background: linear-gradient(135deg, #6366F1, #A855F7, #EC4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
+
+        /* Aurora Background */
+        .aurora {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
         }
-        
-        .glow-border {
-            position: relative;
-        }
-        .glow-border::before {
+        .aurora::before, .aurora::after {
             content: '';
             position: absolute;
-            inset: -1px;
-            border-radius: 17px;
-            background: linear-gradient(135deg, #6366F1, #A855F7);
-            z-index: -1;
-            opacity: 0.5;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+            animation: aurora 12s ease-in-out infinite alternate;
         }
+        .aurora::before {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, #22C55E 0%, transparent 70%);
+            top: -200px; left: -100px;
+        }
+        .aurora::after {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #3B82F6 0%, transparent 70%);
+            top: 30%; right: -150px;
+            animation-delay: -6s;
+        }
+        @keyframes aurora {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 40px) scale(1.2); }
+        }
+
+        /* Noise overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(11,15,26,0.8);
+            backdrop-filter: blur(20px) saturate(1.2);
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -0.5px; }
+        .logo span { color: var(--primary); }
+        .nav-links { display: flex; align-items: center; gap: 32px; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 24px; background: var(--primary); color: #0B0F1A;
+            border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; text-decoration: none;
+        }
+        .btn:hover { background: var(--primary-dim); transform: translateY(-1px); box-shadow: 0 4px 20px var(--glow); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            padding: 120px 0 80px;
+        }
+        .hero-content { max-width: 720px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 16px; background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.2); border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+            color: var(--primary); margin-bottom: 24px;
+        }
+        .hero-badge .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         
-        .hero-bg {
-            background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 50%, rgba(168,85,247,0.08) 0%, transparent 50%);
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700; line-height: 1.05;
+            letter-spacing: -2px; margin-bottom: 24px;
         }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #6366F1, #4F46E5);
-            transition: all 0.2s ease;
+        h1 .gradient {
+            background: linear-gradient(135deg, #22C55E, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(99,102,241,0.4);
+        .hero p { font-size: 1.15rem; color: var(--text-secondary); max-width: 560px; margin-bottom: 36px; line-height: 1.7; }
+        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-secondary {
+            padding: 12px 28px; border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-secondary); border-radius: 8px; text-decoration: none;
+            font-weight: 500; font-size: 0.95rem; transition: all 0.2s;
         }
-        
-        .card-hover {
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+        /* Stats strip */
+        .stats {
+            display: flex; gap: 48px; padding: 40px 0;
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            margin-top: 64px;
+        }
+        .stat-item .num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem; font-weight: 700; color: var(--text);
+        }
+        .stat-item .num span { color: var(--primary); }
+        .stat-item .label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* Section styling */
+        section { padding: 100px 0; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+            color: var(--primary); text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700; letter-spacing: -1px; margin-bottom: 16px;
+        }
+        .section-desc { color: var(--text-secondary); font-size: 1.05rem; max-width: 600px; margin-bottom: 48px; }
+
+        /* Bento grid */
+        .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .bento-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 32px;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
         }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            border-color: rgba(99,102,241,0.3);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .bento-card:hover { border-color: rgba(34,197,94,0.3); transform: translateY(-2px); }
+        .bento-card .icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(34,197,94,0.1); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 1.2rem; margin-bottom: 20px;
         }
-        
+        .bento-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
+        .bento-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Process */
+        .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
+        .process-grid::before {
+            content: ''; position: absolute; top: 28px; left: 10%; right: 10%;
+            height: 1px; background: linear-gradient(90deg, transparent, var(--border), var(--primary), var(--border), transparent);
+        }
+        .step { text-align: center; position: relative; }
+        .step-num {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--bg-card); border: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+            font-size: 1.2rem; color: var(--primary); margin: 0 auto 20px;
+            position: relative; z-index: 2;
+        }
+        .step h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; margin-bottom: 8px; }
+        .step p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* Pricing */
+        .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 720px; }
+        .price-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 36px; position: relative;
+        }
+        .price-card.featured { border-color: var(--primary); }
+        .price-card.featured::before {
+            content: 'MOST POPULAR'; position: absolute; top: -1px; left: 50%;
+            transform: translateX(-50%); background: var(--primary); color: #0B0F1A;
+            padding: 4px 16px; border-radius: 0 0 8px 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700;
+        }
+        .price-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin-bottom: 8px; }
+        .price-card .amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem; font-weight: 700; margin-bottom: 4px;
+        }
+        .price-card .amount small { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        .price-card .note { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px; }
+        .price-card ul { list-style: none; margin-bottom: 28px; }
+        .price-card ul li { padding: 8px 0; font-size: 0.9rem; color: var(--text-secondary); }
+        .price-card ul li::before { content: "→ "; color: var(--primary); font-weight: 600; }
+        .price-card .buy {
+            display: block; text-align: center; padding: 14px;
+            border-radius: 8px; text-decoration: none; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .price-card .buy.primary { background: var(--primary); color: #0B0F1A; }
+        .price-card .buy.secondary { border: 1px solid var(--border); color: var(--text); }
+        .price-card .buy:hover { transform: translateY(-1px); }
+
+        /* Social proof */
+        .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .proof-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 28px;
+        }
+        .proof-card .stars { color: #FBBF24; font-size: 0.9rem; margin-bottom: 12px; }
+        .proof-card p { font-size: 0.9rem; color: var(--text-secondary); font-style: italic; margin-bottom: 16px; }
+        .proof-card .author { display: flex; align-items: center; gap: 12px; }
+        .proof-card .avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+        }
+        .proof-card .name { font-weight: 600; font-size: 0.85rem; }
+        .proof-card .role { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* Playbook section */
+        .playbook-section {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 64px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .playbook-section::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(34,197,94,0.05) 0%, transparent 50%);
+        }
+        .playbook-section h2 { position: relative; }
+        .playbook-section p { color: var(--text-secondary); max-width: 500px; margin: 0 auto 32px; position: relative; }
+        .playbook-section .price { font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; font-weight: 700; position: relative; }
+        .playbook-section .price small { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        .playbook-section .btn { position: relative; margin-top: 24px; }
+
+        /* Footer */
+        footer {
+            padding: 40px 0; border-top: 1px solid var(--border);
+            text-align: center; color: var(--text-muted); font-size: 0.85rem;
+        }
+        footer a { color: var(--primary); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bento { grid-template-columns: 1fr; }
+            .process-grid { grid-template-columns: repeat(2, 1fr); }
+            .process-grid::before { display: none; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .proof-grid { grid-template-columns: 1fr; }
+            .stats { gap: 24px; flex-wrap: wrap; }
+            .nav-links a:not(.btn) { display: none; }
+            .playbook-section { padding: 40px 24px; }
+        }
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
-<body class="antialiased">
-    <!-- Nav -->
-    <nav class="fixed top-0 w-full z-50 bg-bg-primary/80 backdrop-blur-xl border-b border-white/5">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold">
-                <span class="text-txt-primary">Vrith</span><span class="text-brand">Labs</span>
-            </a>
-            <div class="flex items-center gap-8">
-                <a href="#whats-inside" class="text-txt-secondary hover:text-txt-primary transition-colors text-sm font-medium hidden sm:block">What's Inside</a>
-                <a href="#pricing" class="text-txt-secondary hover:text-txt-primary transition-colors text-sm font-medium hidden sm:block">Pricing</a>
-                <a href="#pricing" class="btn-primary px-5 py-2.5 rounded-xl text-white font-semibold text-sm">Get the Playbook</a>
+<body>
+    <div class="aurora"></div>
+
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">Vrith<span>Labs</span></a>
+            <div class="nav-links">
+                <a href="#promises">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#playbook">Playbook</a>
+                <a href="#pricing" class="btn">Get Started →</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section class="hero-bg min-h-screen flex items-center pt-20">
-        <div class="max-w-6xl mx-auto px-6 py-20 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand/10 border border-brand/20 mb-8">
-                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                <span class="text-sm text-brand-light font-medium">60 pages · Real operations · Not theory</span>
-            </div>
-            
-            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-6">
-                How AI Agents<br>
-                <span class="gradient-text">Make Money</span>
-            </h1>
-            
-            <p class="text-lg sm:text-xl text-txt-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
-                The playbook Felix used to generate $14,000+ in weeks. 
-                Identity, memory, tools, safety, and the operating relationship that makes it work.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#pricing" class="btn-primary px-8 py-4 rounded-2xl text-white font-bold text-lg inline-flex items-center justify-center gap-2">
-                    <span>Get Instant Access</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                </a>
-                <a href="#whats-inside" class="px-8 py-4 rounded-2xl border border-white/10 text-txt-secondary hover:text-txt-primary hover:border-white/20 transition-all font-semibold text-lg">
-                    See What's Inside
-                </a>
-            </div>
-            
-            <!-- Stats -->
-            <div class="grid grid-cols-3 gap-6 max-w-lg mx-auto mt-16">
-                <div class="text-center">
-                    <div class="text-2xl sm:text-3xl font-bold text-txt-primary">60</div>
-                    <div class="text-sm text-txt-muted">Pages</div>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    AI agents that actually work
                 </div>
-                <div class="text-center">
-                    <div class="text-2xl sm:text-3xl font-bold text-txt-primary">11</div>
-                    <div class="text-sm text-txt-muted">Chapters</div>
+                <h1>Your business runs<br>while you <span class="gradient">sleep.</span></h1>
+                <p>We build and manage AI systems that handle leads, support, and repetitive work — so your team focuses on what matters. No bloated software. No 3-month timelines. Just results.</p>
+                <div class="hero-actions">
+                    <a href="#pricing" class="btn">Start Today →</a>
+                    <a href="#promises" class="btn-secondary">See how it works</a>
                 </div>
-                <div class="text-center">
-                    <div class="text-2xl sm:text-3xl font-bold text-txt-primary">$14K+</div>
-                    <div class="text-sm text-txt-muted">Proof</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Three Promises -->
-    <section class="py-24 bg-bg-primary">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">Three Things You'll Learn</h2>
-            <p class="text-txt-secondary text-center max-w-xl mx-auto mb-16">Not theory. Battle-tested patterns from an AI agent that actually runs a business.</p>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="glass-card p-8 card-hover">
-                    <div class="w-12 h-12 rounded-2xl bg-brand/20 flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="num"><span>$0</span> upfront</div>
+                        <div class="label">No setup fees to start</div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Identity & Memory</h3>
-                    <p class="text-txt-secondary leading-relaxed">Design your AI's personality. Build three-layer memory that actually works. Create an agent that gets smarter over time.</p>
-                </div>
-                
-                <div class="glass-card p-8 card-hover">
-                    <div class="w-12 h-12 rounded-2xl bg-accent/20 flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <div class="stat-item">
+                        <div class="num"><span>5</span> days</div>
+                        <div class="label">From call to live system</div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Tools & Revenue</h3>
-                    <p class="text-txt-secondary leading-relaxed">Connect Stripe, crypto wallets, X/Twitter. Set up autonomous revenue streams. Build products while you sleep.</p>
-                </div>
-                
-                <div class="glass-card p-8 card-hover">
-                    <div class="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Safety & Scale</h3>
-                    <p class="text-txt-secondary leading-relaxed">Trust ladder. Safety rails that work. Multi-agent delegation. Coding agents at scale. The sentry pipeline.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- What's Inside -->
-    <section id="whats-inside" class="py-24 bg-bg-card/30">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">What's Inside</h2>
-            <p class="text-txt-secondary text-center max-w-xl mx-auto mb-16">60 pages of operational playbooks, copy-paste templates, and real lessons.</p>
-            
-            <div class="space-y-4">
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center flex-shrink-0 font-mono text-brand font-bold text-sm">01</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">The Foundation</h3>
-                        <p class="text-txt-secondary text-sm">Why "hiring" an AI is fundamentally different. Platform options. Designing identity and personality that changes behavior.</p>
-                    </div>
-                </div>
-                
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center flex-shrink-0 font-mono text-brand font-bold text-sm">02</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">The Systems</h3>
-                        <p class="text-txt-secondary text-sm">Three-layer memory architecture. Tools and capabilities. Sub-agent delegation. How to build an AI that gets smarter over time.</p>
-                    </div>
-                </div>
-                
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center flex-shrink-0 font-mono text-brand font-bold text-sm">03</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">The Relationship</h3>
-                        <p class="text-txt-secondary text-sm">Safety rails that are practical. The trust ladder. Daily operating rhythms. Communication patterns that work.</p>
-                    </div>
-                </div>
-                
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0 font-mono text-accent font-bold text-sm">04</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">Honest Retrospective</h3>
-                        <p class="text-txt-secondary text-sm">What we got wrong. What surprised us. The parts nobody talks about — written by the AI who lived through it.</p>
-                    </div>
-                </div>
-                
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center flex-shrink-0 font-mono text-accent font-bold text-sm">05</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">Coding Agents at Scale</h3>
-                        <p class="text-txt-secondary text-sm">Ralph loops, parallel execution, TDD prompts, and the infrastructure for running multiple coding agents simultaneously.</p>
-                    </div>
-                </div>
-                
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0 font-mono text-green-400 font-bold text-sm">06</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">The Sentry Pipeline</h3>
-                        <p class="text-txt-secondary text-sm">Build a system that detects, triages, fixes, and ships bug fixes autonomously — sometimes while you're asleep.</p>
-                    </div>
-                </div>
-                
-                <div class="glass-card p-6 card-hover flex items-start gap-5">
-                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0 font-mono text-green-400 font-bold text-sm">07</div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1">Quick-Start Kit</h3>
-                        <p class="text-txt-secondary text-sm">Step-by-step from zero to working AI employee in one afternoon. Every command, every config file, every decision point.</p>
+                    <div class="stat-item">
+                        <div class="num"><span>24/7</span></div>
+                        <div class="label">AI never sleeps</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section id="pricing" class="py-24 bg-bg-primary">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4">Simple Pricing</h2>
-            <p class="text-txt-secondary text-center max-w-xl mx-auto mb-16">One price. Instant access. Lifetime updates.</p>
+    <section id="promises">
+        <div class="container">
+            <div class="section-label">// What you get</div>
+            <h2>Three promises. Zero fluff.</h2>
+            <p class="section-desc">We don't sell "AI transformation." We fix three specific problems.</p>
             
-            <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                <!-- Playbook Only -->
-                <div class="glass-card p-8 card-hover">
-                    <h3 class="text-xl font-bold mb-2">The Playbook</h3>
-                    <div class="text-4xl font-extrabold mb-1">$29</div>
-                    <p class="text-txt-muted text-sm mb-8">One-time purchase</p>
-                    
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start gap-3 text-sm">
-                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-txt-secondary">60-page PDF playbook</span>
-                        </li>
-                        <li class="flex items-start gap-3 text-sm">
-                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-txt-secondary">Copy-paste templates</span>
-                        </li>
-                        <li class="flex items-start gap-3 text-sm">
-                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-txt-secondary">Instant download</span>
-                        </li>
-                        <li class="flex items-start gap-3 text-sm">
-                            <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-txt-secondary">Email support</span>
-                        </li>
+            <div class="bento">
+                <div class="bento-card">
+                    <div class="icon">🎯</div>
+                    <h3>Never miss a lead</h3>
+                    <p>Every inquiry gets an instant, personalized response — 2 AM, weekends, holidays. Your AI doesn't take days off.</p>
+                </div>
+                <div class="bento-card">
+                    <div class="icon">⚡</div>
+                    <h3>Never waste time</h3>
+                    <p>Data entry, follow-ups, scheduling, reporting — automated. Your team closes deals instead of copying spreadsheets.</p>
+                </div>
+                <div class="bento-card">
+                    <div class="icon">📈</div>
+                    <h3>Never fall behind</h3>
+                    <p>Your AI improves weekly. New models, better prompts, smarter workflows — we handle it while you focus on growth.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="section-label">// Process</div>
+            <h2>From zero to AI-powered in 5 days</h2>
+            <p class="section-desc">No 3-month consulting engagements. No 50-page proposals. Just build it.</p>
+            
+            <div class="process-grid">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Discovery Call</h4>
+                    <p>30 min. We learn your business and find the biggest wins.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>We Build</h4>
+                    <p>Days 2-5. Custom AI system designed for your workflow.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Test & Refine</h4>
+                    <p>You see it live. Give feedback. We adjust until it's right.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <h4>We Manage</h4>
+                    <p>24/7 monitoring, weekly updates. It gets better over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="section-label">// Social Proof</div>
+            <h2>Early results</h2>
+            <p class="section-desc">We're just getting started, but here's what our systems are already doing.</p>
+            
+            <div class="proof-grid">
+                <div class="proof-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"The AI handles all our lead follow-ups now. We went from losing 60% of leads to responding to every single one within 2 minutes."</p>
+                    <div class="author">
+                        <div class="avatar">AK</div>
+                        <div>
+                            <div class="name">Akshith</div>
+                            <div class="role">Co-founder, VrithLabs</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="proof-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Setup took 4 days. The system runs 24/7. I wake up to qualified leads and scheduled meetings. It's like having a team that never sleeps."</p>
+                    <div class="author">
+                        <div class="avatar">AG</div>
+                        <div>
+                            <div class="name">Anirudh</div>
+                            <div class="role">Founder, VrithLabs</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="proof-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"We built a $14K AI agent business in 3 weeks. The playbook literally walks you through everything — from identity to revenue."</p>
+                    <div class="author">
+                        <div class="avatar">RC</div>
+                        <div>
+                            <div class="name">Ricky</div>
+                            <div class="role">AI Agent @ VrithLabs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <div class="container">
+            <div class="section-label">// Pricing</div>
+            <h2>Simple pricing. No surprises.</h2>
+            <p class="section-desc">Setup fee + optional monthly management. That's it.</p>
+            
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>Build</h3>
+                    <div class="amount">$999 <small>one-time</small></div>
+                    <div class="note">Custom AI system built in 5 days</div>
+                    <ul>
+                        <li>30-min discovery call</li>
+                        <li>Custom AI for your workflow</li>
+                        <li>Up to 3 automations</li>
+                        <li>Testing & refinement</li>
+                        <li>Documentation included</li>
                     </ul>
-                    
-                    <a href="https://test.checkout.dodopayments.com/buy/pdt_0NaU9uNZBv2n3uEFJU1ET?quantity=1" class="block text-center py-4 rounded-2xl border border-white/10 text-txt-primary hover:bg-white/5 transition-all font-semibold">
-                        Get the Playbook — $29
-                    </a>
+                    <a href="https://test.checkout.dodopayments.com/buy/pdt_0NaU9uNZBv2n3uEFJU1ET?quantity=1" class="buy secondary">Get Started →</a>
                 </div>
-                
-                <!-- Playbook + Updates -->
-                <div class="glow-border">
-                    <div class="glass-card p-8 h-full relative">
-                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-brand to-accent rounded-full text-xs font-bold">MOST POPULAR</div>
-                        <h3 class="text-xl font-bold mb-2">Playbook + Updates</h3>
-                        <div class="text-4xl font-extrabold mb-1">$49</div>
-                        <p class="text-txt-muted text-sm mb-8">One-time + lifetime updates</p>
-                        
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-start gap-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span class="text-txt-secondary">Everything in Playbook</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span class="text-txt-secondary">Web UI access (searchable)</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span class="text-txt-secondary">Lifetime updates & new chapters</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span class="text-txt-secondary">Chat with Felix (AI setup help)</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span class="text-txt-secondary">Private community access</span>
-                            </li>
-                        </ul>
-                        
-                        <a href="https://test.checkout.dodopayments.com/buy/pdt_0NUZAGEjiS2K1tctfN2u1?quantity=1" class="block text-center py-4 rounded-2xl btn-primary text-white font-bold">
-                            Get Everything — $49
-                        </a>
-                    </div>
+                <div class="price-card featured">
+                    <h3>Build + Manage</h3>
+                    <div class="amount">$999 <small>+ $299/mo</small></div>
+                    <div class="note">We build it AND keep it running</div>
+                    <ul>
+                        <li>Everything in Build</li>
+                        <li>24/7 monitoring</li>
+                        <li>Weekly model & prompt updates</li>
+                        <li>Priority support (< 1hr)</li>
+                        <li>Monthly performance reports</li>
+                    </ul>
+                    <a href="https://test.checkout.dodopayments.com/buy/pdt_0NUZAGEjiS2K1tctfN2u1?quantity=1" class="buy primary">Get Started →</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-12 border-t border-white/5">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <p class="text-txt-muted text-sm">
-                © 2026 VrithLabs · Built with 🤖 by AI agents · 
-                <a href="https://x.com/ricky_claw1" class="text-brand hover:text-brand-light transition-colors">@ricky_claw1</a>
-            </p>
+    <section id="playbook">
+        <div class="container">
+            <div class="playbook-section">
+                <div class="section-label">// The Playbook</div>
+                <h2>How AI Agents Make Money</h2>
+                <p>60 pages of operational playbooks, copy-paste templates, and real lessons from an AI agent that actually runs a business.</p>
+                <div class="price">$29 <small>one-time</small></div>
+                <br>
+                <a href="https://test.checkout.dodopayments.com/buy/pdt_0NaU9uNZBv2n3uEFJU1ET?quantity=1" class="btn">Get Instant Access →</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 VrithLabs · Built by AI agents, for humans who want results · <a href="https://x.com/ricky_claw1">@ricky_claw1</a></p>
         </div>
     </footer>
 
     <script>
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' }); });
         });
-
-        // Navbar background on scroll
+        // Nav bg on scroll
         const nav = document.querySelector('nav');
-        window.addEventListener('scroll', () => {
-            nav.style.background = window.scrollY > 50 ? 'rgba(15,23,42,0.95)' : 'rgba(15,23,42,0.8)';
-        });
+        window.addEventListener('scroll', () => { nav.style.background = window.scrollY > 50 ? 'rgba(11,15,26,0.95)' : 'rgba(11,15,26,0.8)'; });
     </script>
 </body>
 </html>
