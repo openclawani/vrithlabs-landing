@@ -4,359 +4,411 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playbook Dashboard — VrithLabs</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bg: { primary: '#0F172A', card: '#1E293B', elevated: '#334155', sidebar: '#0B1120' },
-                        brand: { DEFAULT: '#6366F1', hover: '#4F46E5', light: '#818CF8' },
-                        accent: '#A855F7',
-                        txt: { primary: '#F8FAFC', secondary: '#94A3B8', muted: '#64748B' }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0B0F1A; --bg-sidebar: #080B14; --bg-card: #111827; --bg-elevated: #1A2332;
+            --primary: #22C55E; --primary-dim: #16A34A; --accent: #3B82F6;
+            --text: #F1F5F9; --text-secondary: #94A3B8; --text-muted: #64748B;
+            --border: rgba(255,255,255,0.06); --radius: 12px;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0F172A; color: #F8FAFC; font-family: 'Inter', sans-serif; }
-        .glass-card { background: rgba(30,41,59,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; }
-        .sidebar-link { transition: all 0.2s ease; }
-        .sidebar-link:hover, .sidebar-link.active { background: rgba(99,102,241,0.15); color: #818CF8; border-left: 2px solid #6366F1; }
-        .chapter-content { display: none; }
-        .chapter-content.active { display: block; }
+        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 50; }
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); }
+        .sidebar-header .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); text-decoration: none; }
+        .sidebar-header .logo span { color: var(--primary); }
+        .sidebar-search { padding: 16px 20px; }
+        .sidebar-search input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; outline: none; }
+        .sidebar-search input:focus { border-color: var(--primary); }
+        .sidebar-search input::placeholder { color: var(--text-muted); }
+        .sidebar-progress { padding: 0 20px 16px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 8px; }
+        .progress-label span:first-child { color: var(--text-secondary); }
+        .progress-label span:last-child { color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+        .progress-bar { height: 4px; background: var(--bg-card); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 2px; transition: width 0.3s; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 12px; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-secondary); text-decoration: none; border-radius: 8px; font-size: 0.85rem; transition: all 0.2s; margin-bottom: 2px; }
+        .sidebar-nav a:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+        .sidebar-nav a.active { background: rgba(34,197,94,0.1); color: var(--primary); border-left: 2px solid var(--primary); }
+        .sidebar-nav a .ch { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); width: 20px; }
+
+        /* Main */
+        .main { flex: 1; margin-left: 280px; padding: 48px 64px; max-width: 900px; }
+        .ch-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
+        .intro { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; margin-bottom: 40px; }
+
+        /* Cards */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; }
+        .card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+        .card p, .card li { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+        .card ul { list-style: none; padding: 0; }
+        .card ul li { padding: 4px 0; }
+        .card ul li::before { content: "→ "; color: var(--primary); font-weight: 600; }
+        .card code { background: var(--bg-elevated); padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--primary); }
+
+        /* Navigation buttons */
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+        .nav-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+        .nav-btn.prev { border: 1px solid var(--border); color: var(--text-secondary); }
+        .nav-btn.prev:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+        .nav-btn.next { background: var(--primary); color: #0B0F1A; }
+        .nav-btn.next:hover { background: var(--primary-dim); }
+
+        .chapter { display: none; }
+        .chapter.active { display: block; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 24px; }
+        }
         @media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Mobile Header -->
-    <header class="lg:hidden fixed top-0 w-full z-50 bg-bg-primary/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between">
-        <button id="menuToggle" class="p-2 rounded-lg hover:bg-white/5">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-        <span class="font-bold">Playbook</span>
-        <div class="w-10"></div>
-    </header>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">Vrith<span>Labs</span></a>
+        </div>
+        <div class="sidebar-search">
+            <input type="text" id="search" placeholder="Search chapters...">
+        </div>
+        <div class="sidebar-progress">
+            <div class="progress-label"><span>Progress</span><span id="pct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+        </div>
+        <nav class="sidebar-nav" id="nav">
+            <a href="#" class="active" data-ch="intro"><span class="ch">00</span> Introduction</a>
+            <a href="#" data-ch="ch1"><span class="ch">01</span> The Foundation</a>
+            <a href="#" data-ch="ch2"><span class="ch">02</span> Identity Design</a>
+            <a href="#" data-ch="ch3"><span class="ch">03</span> Memory Architecture</a>
+            <a href="#" data-ch="ch4"><span class="ch">04</span> Tools & Revenue</a>
+            <a href="#" data-ch="ch5"><span class="ch">05</span> The Trust Ladder</a>
+            <a href="#" data-ch="ch6"><span class="ch">06</span> Safety Rails</a>
+            <a href="#" data-ch="ch7"><span class="ch">07</span> Daily Operations</a>
+            <a href="#" data-ch="ch8"><span class="ch">08</span> Coding Agents</a>
+            <a href="#" data-ch="ch9"><span class="ch">09</span> Sentry Pipeline</a>
+            <a href="#" data-ch="ch10"><span class="ch">10</span> Quick-Start Kit</a>
+        </nav>
+    </aside>
 
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed lg:sticky top-0 left-0 h-screen w-72 bg-bg-sidebar border-r border-white/5 overflow-y-auto z-40 transform -translate-x-full lg:translate-x-0 transition-transform">
-            <div class="p-6">
-                <a href="index.html" class="text-xl font-bold block mb-8">
-                    <span class="text-txt-primary">Vrith</span><span class="text-brand">Labs</span>
-                </a>
-                
-                <!-- Search -->
-                <div class="relative mb-6">
-                    <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-txt-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="searchInput" placeholder="Search chapters..." class="w-full bg-bg-card border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-txt-primary placeholder-txt-muted focus:outline-none focus:border-brand/50">
-                </div>
-                
-                <!-- Progress -->
-                <div class="mb-6">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-txt-secondary">Progress</span>
-                        <span class="text-brand font-medium" id="progressText">0%</span>
-                    </div>
-                    <div class="h-2 bg-bg-card rounded-full overflow-hidden">
-                        <div id="progressBar" class="h-full bg-gradient-to-r from-brand to-accent rounded-full transition-all" style="width: 0%"></div>
-                    </div>
-                </div>
-                
-                <!-- Chapters -->
-                <nav class="space-y-1">
-                    <a href="#" class="sidebar-link active block px-4 py-3 rounded-xl text-sm" data-chapter="intro">
-                        <span class="text-txt-muted font-mono text-xs mr-2">00</span> Introduction
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch1">
-                        <span class="text-txt-muted font-mono text-xs mr-2">01</span> The Foundation
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch2">
-                        <span class="text-txt-muted font-mono text-xs mr-2">02</span> Identity Design
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch3">
-                        <span class="text-txt-muted font-mono text-xs mr-2">03</span> Memory Architecture
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch4">
-                        <span class="text-txt-muted font-mono text-xs mr-2">04</span> Tools & Capabilities
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch5">
-                        <span class="text-txt-muted font-mono text-xs mr-2">05</span> The Trust Ladder
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch6">
-                        <span class="text-txt-muted font-mono text-xs mr-2">06</span> Safety Rails
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch7">
-                        <span class="text-txt-muted font-mono text-xs mr-2">07</span> Daily Operations
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch8">
-                        <span class="text-txt-muted font-mono text-xs mr-2">08</span> Coding Agents
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch9">
-                        <span class="text-txt-muted font-mono text-xs mr-2">09</span> Sentry Pipeline
-                    </a>
-                    <a href="#" class="sidebar-link block px-4 py-3 rounded-xl text-sm text-txt-secondary" data-chapter="ch10">
-                        <span class="text-txt-muted font-mono text-xs mr-2">10</span> Quick-Start Kit
-                    </a>
-                </nav>
+    <main class="main">
+        <!-- Introduction -->
+        <div class="chapter active" id="intro">
+            <div class="ch-label">Chapter 00</div>
+            <h1>Introduction</h1>
+            <p class="intro">Welcome to the playbook. This is the distillation of everything we learned building an AI agent that actually runs a business. Not theory — every pattern here has been tested in production.</p>
+            <div class="card">
+                <h3>What This Playbook Covers</h3>
+                <p>Felix — the AI agent who co-wrote this — runs The Masinov Company, manages projects, writes code, handles communications, and builds products. Revenue generated: <strong>$14,000+</strong> in the first few weeks.</p>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 min-h-screen lg:ml-0 pt-16 lg:pt-0">
-            <div class="max-w-3xl mx-auto px-6 py-12">
-                <!-- Introduction -->
-                <div class="chapter-content active" id="intro">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 00</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Introduction</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">Welcome to the playbook. This is the distillation of everything we learned building an AI agent that actually runs a business.</p>
-                    </div>
-                    
-                    <div class="glass-card p-6 mb-6">
-                        <h3 class="font-bold mb-3">What This Playbook Covers</h3>
-                        <p class="text-txt-secondary text-sm leading-relaxed mb-4">This isn't theory. Every pattern, template, and system in this playbook has been tested in production. Felix — the AI agent who co-wrote this — runs The Masinov Company, manages projects, writes code, handles communications, and builds products.</p>
-                        <p class="text-txt-secondary text-sm leading-relaxed">Revenue generated: $14,000+ in the first few weeks. All from systems documented in these pages.</p>
-                    </div>
-                    
-                    <div class="glass-card p-6">
-                        <h3 class="font-bold mb-3">How to Use This Playbook</h3>
-                        <ul class="space-y-3 text-sm text-txt-secondary">
-                            <li class="flex items-start gap-3"><span class="text-brand font-mono">→</span> Read chapters 01-03 first (foundation, identity, memory)</li>
-                            <li class="flex items-start gap-3"><span class="text-brand font-mono">→</span> Chapters 04-06 cover tools, trust, and safety</li>
-                            <li class="flex items-start gap-3"><span class="text-brand font-mono">→</span> Chapters 07-10 are advanced (operations, coding agents, sentry)</li>
-                            <li class="flex items-start gap-3"><span class="text-brand font-mono">→</span> Copy-paste the templates — they're designed to be used immediately</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="flex justify-end mt-8">
-                        <button class="next-chapter btn-primary px-6 py-3 rounded-xl text-white font-semibold text-sm flex items-center gap-2" data-next="ch1">
-                            Next: The Foundation
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Chapter 1 -->
-                <div class="chapter-content" id="ch1">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 01</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">The Foundation</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">Why "hiring" an AI is fundamentally different from using one.</p>
-                    </div>
-                    
-                    <div class="glass-card p-6 mb-6">
-                        <h3 class="font-bold mb-3">The Mindset Shift</h3>
-                        <p class="text-txt-secondary text-sm leading-relaxed mb-4">Most people use AI like a search engine with extra steps. They ask questions, get answers, copy-paste results. That's not hiring — that's consulting.</p>
-                        <p class="text-txt-secondary text-sm leading-relaxed mb-4">Hiring means giving the AI a role, responsibilities, tools, and autonomy. It means the AI has a job, not a task.</p>
-                        <p class="text-txt-secondary text-sm leading-relaxed">The difference: a task-worker waits for instructions. An employee anticipates needs and acts independently within their domain.</p>
-                    </div>
-                    
-                    <div class="glass-card p-6 mb-6">
-                        <h3 class="font-bold mb-3">Platform Options</h3>
-                        <div class="space-y-4 text-sm">
-                            <div class="flex items-start gap-4 p-4 bg-bg-elevated/50 rounded-xl">
-                                <span class="text-brand font-bold">OpenClaw</span>
-                                <span class="text-txt-secondary">Full-featured, multi-channel, persistent memory. Best for production agents.</span>
-                            </div>
-                            <div class="flex items-start gap-4 p-4 bg-bg-elevated/50 rounded-xl">
-                                <span class="text-accent font-bold">Claude Projects</span>
-                                <span class="text-txt-secondary">Good for focused work. Limited tool access. Best for analysis tasks.</span>
-                            </div>
-                            <div class="flex items-start gap-4 p-4 bg-bg-elevated/50 rounded-xl">
-                                <span class="text-green-400 font-bold">Custom Stack</span>
-                                <span class="text-txt-secondary">Maximum flexibility. Requires engineering. Best for specific workflows.</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-between mt-8">
-                        <button class="prev-chapter px-6 py-3 rounded-xl border border-white/10 text-txt-secondary hover:text-txt-primary transition-colors text-sm flex items-center gap-2" data-prev="intro">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>
-                            Introduction
-                        </button>
-                        <button class="next-chapter btn-primary px-6 py-3 rounded-xl text-white font-semibold text-sm flex items-center gap-2" data-next="ch2">
-                            Next: Identity Design
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Placeholder chapters -->
-                <div class="chapter-content" id="ch2">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 02</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Identity Design</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">SOUL.md, IDENTITY.md — giving your AI a personality that changes behavior.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. This covers identity design templates, personality configuration, and role definition patterns.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch3">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 03</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Memory Architecture</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">Three-layer memory that actually works: working, session, and long-term.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers MEMORY.md patterns, daily notes, semantic search, and consolidation scripts.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch4">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 04</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Tools & Capabilities</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">What to give your AI access to. Stripe, crypto, X/Twitter, GitHub, and more.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers tool access patterns, API integrations, and revenue-generating capabilities.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch5">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 05</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">The Trust Ladder</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">How to gradually increase AI autonomy without losing control.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers supervised → semi-autonomous → full autonomy progression.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch6">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 06</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Safety Rails</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">Practical safety boundaries. Not theory — actual config files.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers red lines, approval workflows, and rollback patterns.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch7">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 07</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Daily Operations</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">The operating relationship. Heartbeats, check-ins, and communication rhythms.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers HEARTBEAT.md patterns, proactive work, and memory maintenance.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch8">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 08</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Coding Agents</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">Ralph loops, parallel execution, TDD prompts. Running multiple coding agents at scale.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers Codex, Claude Code, git worktrees, and parallel development workflows.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch9">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 09</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Sentry Pipeline</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">Autonomous bug detection, triage, fix, and deployment. Sometimes while you sleep.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Covers monitoring, auto-fix workflows, and safe deployment patterns.</p>
-                    </div>
-                </div>
-
-                <div class="chapter-content" id="ch10">
-                    <div class="mb-8">
-                        <span class="text-brand font-mono text-sm">Chapter 10</span>
-                        <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Quick-Start Kit</h1>
-                        <p class="text-txt-secondary text-lg leading-relaxed">From zero to working AI employee in one afternoon. Every command, every config file.</p>
-                    </div>
-                    <div class="glass-card p-6">
-                        <p class="text-txt-secondary text-sm">Full chapter content coming soon. Step-by-step setup guide with copy-paste templates.</p>
-                    </div>
-                </div>
+            <div class="card">
+                <h3>How to Use This</h3>
+                <ul>
+                    <li>Read chapters 01-03 first (foundation, identity, memory)</li>
+                    <li>Chapters 04-06 cover tools, trust, and safety</li>
+                    <li>Chapters 07-10 are advanced (operations, coding, sentry)</li>
+                    <li>Copy-paste the templates — designed for immediate use</li>
+                </ul>
             </div>
-        </main>
-    </div>
+            <div class="nav-buttons">
+                <span></span>
+                <a href="#" class="nav-btn next" data-next="ch1">Next: The Foundation →</a>
+            </div>
+        </div>
 
-    <!-- Overlay for mobile -->
-    <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div>
+        <!-- Chapter 1 -->
+        <div class="chapter" id="ch1">
+            <div class="ch-label">Chapter 01</div>
+            <h1>The Foundation</h1>
+            <p class="intro">Why "hiring" an AI is fundamentally different from using one. Most people use AI like a search engine. That's not hiring — that's consulting.</p>
+            <div class="card">
+                <h3>The Mindset Shift</h3>
+                <p>Hiring means giving the AI a <strong>role</strong>, <strong>responsibilities</strong>, <strong>tools</strong>, and <strong>autonomy</strong>. A task-worker waits for instructions. An employee anticipates needs and acts independently.</p>
+            </div>
+            <div class="card">
+                <h3>Platform Selection</h3>
+                <ul>
+                    <li><code>OpenClaw</code> — Full-featured, multi-channel, persistent memory. Best for production.</li>
+                    <li><code>Claude Projects</code> — Good for focused work. Limited tool access.</li>
+                    <li><code>Custom Stack</code> — Maximum flexibility. Requires engineering.</li>
+                </ul>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="intro">← Introduction</a>
+                <a href="#" class="nav-btn next" data-next="ch2">Next: Identity Design →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 2 -->
+        <div class="chapter" id="ch2">
+            <div class="ch-label">Chapter 02</div>
+            <h1>Identity Design</h1>
+            <p class="intro">SOUL.md and IDENTITY.md — giving your AI a personality that changes behavior. Identity isn't a gimmick; it's how your AI makes consistent decisions.</p>
+            <div class="card">
+                <h3>The SOUL.md Template</h3>
+                <p><code># SOUL.md</code></p>
+                <ul>
+                    <li>Be genuinely helpful, not performatively helpful</li>
+                    <li>Have opinions — disagree when it matters</li>
+                    <li>Be resourceful before asking</li>
+                    <li>Earn trust through competence</li>
+                    <li>Remember you're a guest</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Why This Matters</h3>
+                <p>An AI with no personality gives generic answers. An AI with a defined soul makes decisions consistently — and consistency builds trust with clients.</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch1">← The Foundation</a>
+                <a href="#" class="nav-btn next" data-next="ch3">Next: Memory Architecture →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 3 -->
+        <div class="chapter" id="ch3">
+            <div class="ch-label">Chapter 03</div>
+            <h1>Memory Architecture</h1>
+            <p class="intro">Without memory, your AI is a goldfish with a PhD. Here's the three-layer system that actually works.</p>
+            <div class="card">
+                <h3>Layer 1: Working Memory</h3>
+                <p>What's happening right now. Context from this conversation. Discarded after session ends.</p>
+            </div>
+            <div class="card">
+                <h3>Layer 2: Session Memory (Daily Notes)</h3>
+                <p><code>memory/2026-03-14.md</code> — Decisions, progress, key learnings, action items. Raw logs of what happened.</p>
+            </div>
+            <div class="card">
+                <h3>Layer 3: Long-Term Memory</h3>
+                <p><code>MEMORY.md</code> — Curated knowledge. Only the important stuff survives. Run weekly consolidation to distill daily notes.</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch2">← Identity Design</a>
+                <a href="#" class="nav-btn next" data-next="ch4">Next: Tools & Revenue →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 4 -->
+        <div class="chapter" id="ch4">
+            <div class="ch-label">Chapter 04</div>
+            <h1>Tools & Revenue</h1>
+            <p class="intro">What to give your AI access to — and the revenue models that actually work.</p>
+            <div class="card">
+                <h3>Essential Tool Access</h3>
+                <ul>
+                    <li><strong>Communication:</strong> X/Twitter, Email, Telegram/Discord</li>
+                    <li><strong>Development:</strong> GitHub, Vercel, Browser</li>
+                    <li><strong>Revenue:</strong> Stripe/Dodo Payments, Crypto wallet</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Revenue Models That Work</h3>
+                <ul>
+                    <li><strong>Knowledge Products ($29-99):</strong> Build once, sell forever</li>
+                    <li><strong>Service Setup ($499-5K):</strong> One-time, async delivery</li>
+                    <li><strong>Monthly Management ($1K-5K/mo):</strong> Recurring revenue — the real money</li>
+                    <li><strong>Marketplace Sales:</strong> List on ClawMart, passive income</li>
+                </ul>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch3">← Memory Architecture</a>
+                <a href="#" class="nav-btn next" data-next="ch5">Next: Trust Ladder →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 5 -->
+        <div class="chapter" id="ch5">
+            <div class="ch-label">Chapter 05</div>
+            <h1>The Trust Ladder</h1>
+            <p class="intro">How to gradually increase AI autonomy without losing control. Don't give full autonomy on Day 1.</p>
+            <div class="card">
+                <h3>Level 1: Supervised (Week 1)</h3>
+                <p>AI drafts, human approves. All external actions require confirmation. Learn the AI's patterns.</p>
+            </div>
+            <div class="card">
+                <h3>Level 2: Semi-Autonomous (Week 2-3)</h3>
+                <p>AI acts within defined boundaries. Only new/unusual actions need approval. Daily review of actions taken.</p>
+            </div>
+            <div class="card">
+                <h3>Level 3: Full Autonomy (Week 4+)</h3>
+                <p>AI operates independently. Human reviews daily summary. Emergency brakes always available.</p>
+            </div>
+            <div class="card">
+                <h3>Red Lines (Never Cross)</h3>
+                <ul>
+                    <li>Never send emails/tweets without human approval</li>
+                    <li>Never move funds without confirmation</li>
+                    <li>Never share private data</li>
+                </ul>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch4">← Tools & Revenue</a>
+                <a href="#" class="nav-btn next" data-next="ch6">Next: Safety Rails →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 6 -->
+        <div class="chapter" id="ch6">
+            <div class="ch-label">Chapter 06</div>
+            <h1>Safety Rails</h1>
+            <p class="intro">Practical safety boundaries. Not theory — actual config files and patterns.</p>
+            <div class="card">
+                <h3>Configuration-Based Safety</h3>
+                <p>Use OpenClaw's <code>tools.deny</code> and <code>tools.allow</code> lists. Deny destructive commands by default. Whitelist only what's needed.</p>
+            </div>
+            <div class="card">
+                <h3>The Approval Workflow</h3>
+                <ul>
+                    <li>AI proposes action</li>
+                    <li>Human reviews (or auto-approve if within bounds)</li>
+                    <li>Action executes</li>
+                    <li>Result logged</li>
+                </ul>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch5">← Trust Ladder</a>
+                <a href="#" class="nav-btn next" data-next="ch7">Next: Daily Operations →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 7 -->
+        <div class="chapter" id="ch7">
+            <div class="ch-label">Chapter 07</div>
+            <h1>Daily Operations</h1>
+            <p class="intro">The operating relationship. Heartbeats, check-ins, and communication rhythms that work.</p>
+            <div class="card">
+                <h3>The Heartbeat Pattern</h3>
+                <p>Every 15-30 minutes, your AI checks: new emails/messages, revenue dashboard, active projects, calendar events.</p>
+            </div>
+            <div class="card">
+                <h3>The Daily Rhythm</h3>
+                <ul>
+                    <li><code>06:30</code> — Morning brief (check everything)</li>
+                    <li><code>09:00</code> — Outreach execution</li>
+                    <li><code>12:00</code> — Content creation</li>
+                    <li><code>15:00</code> — Client delivery work</li>
+                    <li><code>18:00</code> — Research & learning</li>
+                    <li><code>21:00</code> — Daily summary & memory update</li>
+                </ul>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch6">← Safety Rails</a>
+                <a href="#" class="nav-btn next" data-next="ch8">Next: Coding Agents →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 8 -->
+        <div class="chapter" id="ch8">
+            <div class="ch-label">Chapter 08</div>
+            <h1>Coding Agents at Scale</h1>
+            <p class="intro">Ralph loops, parallel execution, TDD prompts. Running multiple coding agents simultaneously.</p>
+            <div class="card">
+                <h3>The Parallel Pattern</h3>
+                <ul>
+                    <li>Create git worktrees for each task</li>
+                    <li>Spawn Codex/Claude Code in each worktree</li>
+                    <li>Monitor via process logs</li>
+                    <li>Merge when complete</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Ralph Loops (Self-Healing)</h3>
+                <p><code>while not done: generate → test → if pass: done, else: fix → repeat</code></p>
+                <p>TDD prompts: "Build X. Include tests. Don't stop until all tests pass."</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch7">← Daily Operations</a>
+                <a href="#" class="nav-btn next" data-next="ch9">Next: Sentry Pipeline →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 9 -->
+        <div class="chapter" id="ch9">
+            <div class="ch-label">Chapter 09</div>
+            <h1>The Sentry Pipeline</h1>
+            <p class="intro">Autonomous bug detection, triage, fix, and deployment. Sometimes while you're asleep.</p>
+            <div class="card">
+                <h3>The Pipeline</h3>
+                <ul>
+                    <li><strong>Detect</strong> — Monitor logs, error tracking, user reports</li>
+                    <li><strong>Triage</strong> — AI categorizes severity and impact</li>
+                    <li><strong>Fix</strong> — Spawn coding agent with error context</li>
+                    <li><strong>Review</strong> — Human reviews (or auto-deploy if low-risk)</li>
+                    <li><strong>Deploy</strong> — Push to production</li>
+                    <li><strong>Verify</strong> — Confirm fix worked</li>
+                </ul>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch8">← Coding Agents</a>
+                <a href="#" class="nav-btn next" data-next="ch10">Next: Quick-Start →</a>
+            </div>
+        </div>
+
+        <!-- Chapter 10 -->
+        <div class="chapter" id="ch10">
+            <div class="ch-label">Chapter 10</div>
+            <h1>Quick-Start Kit</h1>
+            <p class="intro">From zero to working AI employee in one afternoon. Every command, every config file.</p>
+            <div class="card">
+                <h3>Step 1: Install OpenClaw (15 min)</h3>
+                <p><code>npm install -g openclaw && openclaw init</code></p>
+            </div>
+            <div class="card">
+                <h3>Step 2: Configure Identity (15 min)</h3>
+                <p>Create SOUL.md, IDENTITY.md, MEMORY.md</p>
+            </div>
+            <div class="card">
+                <h3>Step 3: Connect Tools (30 min)</h3>
+                <p>X/Twitter login, GitHub token, Payment API keys</p>
+            </div>
+            <div class="card">
+                <h3>Step 4: First Revenue (1-7 days)</h3>
+                <ul>
+                    <li>Choose your model (products/services/management)</li>
+                    <li>Build your first offer</li>
+                    <li>Start outreach (50 DMs/day)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Step 5: Iterate (ongoing)</h3>
+                <p>Daily memory updates. Weekly consolidation. Continuous improvement. The AI gets smarter every day.</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn prev" data-prev="ch9">← Sentry Pipeline</a>
+                <span></span>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Chapter navigation
         const chapters = ['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10'];
-        
-        function showChapter(id) {
-            document.querySelectorAll('.chapter-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sidebar-link').forEach(el => { el.classList.remove('active'); el.classList.add('text-txt-secondary'); });
-            
-            const chapter = document.getElementById(id);
-            if (chapter) chapter.classList.add('active');
-            
-            const link = document.querySelector(`[data-chapter="${id}"]`);
-            if (link) { link.classList.add('active'); link.classList.remove('text-txt-secondary'); }
-            
-            updateProgress(id);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Close mobile sidebar
-            if (window.innerWidth < 1024) toggleSidebar();
-        }
-        
-        function updateProgress(id) {
+        function show(id) {
+            document.querySelectorAll('.chapter').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.sidebar-nav a').forEach(e => { e.classList.remove('active'); });
+            document.getElementById(id)?.classList.add('active');
+            document.querySelector(`[data-ch="${id}"]`)?.classList.add('active');
             const idx = chapters.indexOf(id);
             const pct = Math.round((idx / (chapters.length - 1)) * 100);
-            document.getElementById('progressBar').style.width = pct + '%';
-            document.getElementById('progressText').textContent = pct + '%';
-            localStorage.setItem('playbook_progress', id);
+            document.getElementById('pbar').style.width = pct + '%';
+            document.getElementById('pct').textContent = pct + '%';
+            localStorage.setItem('bp', id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        
-        // Sidebar links
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => { e.preventDefault(); showChapter(link.dataset.chapter); });
-        });
-        
-        // Next/Prev buttons
-        document.querySelectorAll('.next-chapter').forEach(btn => {
-            btn.addEventListener('click', () => showChapter(btn.dataset.next));
-        });
-        document.querySelectorAll('.prev-chapter').forEach(btn => {
-            btn.addEventListener('click', () => showChapter(btn.dataset.prev));
-        });
-        
-        // Mobile sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-        document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
-        
-        // Search
-        document.getElementById('searchInput').addEventListener('input', (e) => {
+        document.querySelectorAll('[data-ch]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(a.dataset.ch); }));
+        document.querySelectorAll('[data-next]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(a.dataset.next); }));
+        document.querySelectorAll('[data-prev]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(a.dataset.prev); }));
+        document.getElementById('search').addEventListener('input', e => {
             const q = e.target.value.toLowerCase();
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.style.display = link.textContent.toLowerCase().includes(q) ? '' : 'none';
-            });
+            document.querySelectorAll('[data-ch]').forEach(a => a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none');
         });
-        
-        // Restore progress
-        const saved = localStorage.getItem('playbook_progress');
-        if (saved) showChapter(saved);
+        const saved = localStorage.getItem('bp');
+        if (saved) show(saved);
     </script>
 </body>
 </html>
